@@ -50,7 +50,7 @@ import {
 ### Convert AD to BS
 
 ```typescript
-const adDate = new Date(2002, 7, 17); // August 17, 2002
+const adDate = new Date(2002, 08, 17); // August 17, 2002
 const bsDate = adToBs(adDate);
 
 console.log(bsDate);
