@@ -82,7 +82,7 @@ const formatted = formatBs(
 );
 
 console.log(formatted);
-// Output: "2059-Shrawan-Saturday"
+// Output: "2059-Bhadra-Saturday"
 ```
 
 ### Format AD Dates
@@ -90,7 +90,7 @@ console.log(formatted);
 ```typescript
 import { formatAd } from 'nepali-calendar-kit';
 
-const adDate = new Date(2002, 7, 17);
+const adDate = new Date(2002, 08, 17);
 
 const formatted = formatAd(adDate, 'DD/MM/YYYY');
 console.log(formatted);
