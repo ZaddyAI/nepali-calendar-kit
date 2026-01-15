@@ -56,6 +56,15 @@ declare function formatBs(date: BSDate, format?: DateFormat, displayMonth?: Disp
  */
 declare function formatAd(date: Date, format?: DateFormat): string;
 
+/**
+ * Converts English digits (0-9) in a string to Nepali numerals (०-९)
+ */
+declare function toNepaliNumeral(str: string | number): string;
+/**
+ * Converts Nepali numerals (०-९) in a string to English digits (0-9)
+ */
+declare function toEnglishNumeral(str: string): string;
+
 interface Props {
     onChange?: (result: DatePickerResult | null) => void;
     theme?: Theme;
@@ -67,4 +76,4 @@ interface Props {
 }
 declare const NepaliDatePicker: React.FC<Props>;
 
-export { type ADDate, type BSDate, type BSMetadata, type DateFormat, type DatePickerResult, type DisplayType, type LanguageCode, type NepaliDate, NepaliDatePicker, type Theme, adToBs, bsToAd, formatAd, formatBs };
+export { type ADDate, type BSDate, type BSMetadata, type DateFormat, type DatePickerResult, type DisplayType, type LanguageCode, type NepaliDate, NepaliDatePicker, type Theme, adToBs, bsToAd, formatAd, formatBs, toEnglishNumeral, toNepaliNumeral };

@@ -2,15 +2,29 @@
   "name": "@gambhirpoudel/nepali-calendar-kit",
   "version": "1.0.1",
   "description": "Premium themeable Nepali DatePicker and AD/BS Converter for React.",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/index.css",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./style.css": "./dist/index.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --minify --clean",
-    "prepare": "npm run build"
+    "build": "tsup src/index.ts --format cjs,esm --dts --minify --clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZaddyAI/nepali-calendar-kit.git"
   },
   "keywords": [
     "react",
@@ -22,7 +36,6 @@
   ],
   "author": "Gambhir Poudel",
   "license": "MIT",
-  "type": "module",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
