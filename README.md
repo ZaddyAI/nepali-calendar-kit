@@ -128,13 +128,6 @@ interface Theme {
   shadow?: string; // Box shadow
   inputBg?: string; // Input background color
 }
-```
-Your README is already **well-written and accurate**. To add the **latest `NepaliDate` / `nepaliToday` capability**, you only need to **add one new section**. Everything else should remain exactly the same, as you requested.
-
-Below is the **drop-in addition** you can paste into your README.
-
----
-
 ## 3. NepaliDate (Date-like API)
 
 The library also provides a **Date-like wrapper** for working with Nepali (BS) dates in a familiar, object-oriented way.
