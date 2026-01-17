@@ -2,13 +2,6 @@ import React from 'react';
 
 type BSMetadata = Record<string, number[]>;
 type LanguageCode = "en" | "np";
-interface NepaliDate {
-    year: number;
-    month: number;
-    day: number;
-    monthName?: string;
-    formatted?: string;
-}
 type ADDate = Date;
 interface BSDate {
     year: number;
@@ -76,4 +69,17 @@ interface Props {
 }
 declare const NepaliDatePicker: React.FC<Props>;
 
-export { type ADDate, type BSDate, type BSMetadata, type DateFormat, type DatePickerResult, type DisplayType, type LanguageCode, type NepaliDate, NepaliDatePicker, type Theme, adToBs, bsToAd, formatAd, formatBs, toEnglishNumeral, toNepaliNumeral };
+declare class NepaliDate {
+    private bs;
+    constructor(date?: Date | BSDate);
+    static today(): NepaliDate;
+    getYear(): number;
+    getMonth(): number;
+    getDate(): number;
+    getDay(): number;
+    toAD(): Date;
+    toBS(): BSDate;
+    format(format?: DateFormat, displayMonth?: DisplayType, displayDay?: DisplayType): string;
+}
+
+export { type ADDate, type BSDate, type BSMetadata, type DateFormat, type DatePickerResult, type DisplayType, type LanguageCode, NepaliDate, NepaliDatePicker, type Theme, adToBs, bsToAd, formatAd, formatBs, toEnglishNumeral, toNepaliNumeral };

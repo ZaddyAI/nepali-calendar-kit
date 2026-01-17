@@ -129,6 +129,76 @@ interface Theme {
   inputBg?: string; // Input background color
 }
 ```
+Your README is already **well-written and accurate**. To add the **latest `NepaliDate` / `nepaliToday` capability**, you only need to **add one new section**. Everything else should remain exactly the same, as you requested.
+
+Below is the **drop-in addition** you can paste into your README.
+
+---
+
+## 3. NepaliDate (Date-like API)
+
+The library also provides a **Date-like wrapper** for working with Nepali (BS) dates in a familiar, object-oriented way.
+
+## Get today’s Nepali date
+
+```ts
+import { NepaliDate } from "@gambhirpoudel/nepali-calendar-kit";
+
+const today = NepaliDate.today();
+
+console.log(today.getYear());  // 2082
+console.log(today.getMonth()); // 10
+console.log(today.getDate());  // 1
+```
+
+---
+
+### Create from AD or BS date
+
+```ts
+// From AD Date
+const npFromAd = new NepaliDate(new Date("2026-01-15"));
+
+// From BS Date
+const npFromBs = new NepaliDate({ year: 2082, month: 10, day: 1 });
+```
+
+---
+
+### Format Nepali date
+
+```ts
+today.format();
+// "२०८२-१०-०१"
+
+today.format("DD/MM/YYYY", "long", "short");
+// "०१/माघ/२०८२"
+```
+
+---
+
+### Convert back to AD
+
+```ts
+const adDate = today.toAD();
+console.log(adDate);
+// Thu Jan 15 2026 00:00:00 GMT+0000 (UTC)
+```
+
+---
+
+### Available Methods
+
+| Method               | Description                            |
+| -------------------- | -------------------------------------- |
+| `NepaliDate.today()` | Returns today’s Nepali (BS) date       |
+| `getYear()`          | Returns BS year                        |
+| `getMonth()`         | Returns BS month (1–12)                |
+| `getDate()`          | Returns BS day                         |
+| `getDay()`           | Returns weekday (0–6, Sunday–Saturday) |
+| `format()`           | Formats BS date                        |
+| `toAD()`             | Converts BS → AD                       |
+| `toBS()`             | Returns raw BS object                  |
 
 ---
 
