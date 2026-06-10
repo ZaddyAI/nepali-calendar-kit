@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0
+## [2.0.0] - 2026-06-10
 
 ### Breaking changes
 
@@ -43,6 +43,19 @@
 - `NepaliDate.format(format, monthFormat, dayFormat)` — consistent with `formatBs`.
 - Exported types reduced from 17 to 12 — only what consumers need.
 
-## 1.0.8
+## [1.0.8] - 2026-01-17
+
+### Added
+
+- **`NepaliDate` class** with a Date-like API (`NepaliDate.today()`, `getYear()`, `getMonth()`, `getDate()`, `getDay()`, `format()`, `toAD()`, `toBS()`).
+- Public exports updated to include `NepaliDate`.
+- README documentation updated with usage examples for the new API.
+
+### Compatibility
+
+- Fully backward compatible — no breaking changes.
+- Supports React `>=18 <20`.
+
+## [1.0.7] - 2026-01-14
 
 - Initial release.
