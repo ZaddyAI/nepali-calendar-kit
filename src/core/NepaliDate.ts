@@ -1,5 +1,5 @@
 import { adToBs, bsToAd, formatBs } from "./converter";
-import { BSDate, DateFormat, DisplayType } from "./types";
+import { BSDate, DateFormat, FormatPart } from "./types";
 
 export class NepaliDate {
   private bs: BSDate;
@@ -44,9 +44,9 @@ export class NepaliDate {
 
   format(
     format: DateFormat = "YYYY-MM-DD",
-    displayMonth: DisplayType = "numeric",
-    displayDay: DisplayType = "numeric"
+    monthFormat: FormatPart = "numeric",
+    dayFormat: FormatPart = "numeric"
   ): string {
-    return formatBs(this.bs, format, displayMonth, displayDay);
+    return formatBs(this.bs, format, monthFormat, dayFormat);
   }
 }

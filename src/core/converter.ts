@@ -4,31 +4,16 @@ import {
   NP_INITIAL_YEAR,
   NP_MONTHS_DATA,
 } from "./metadata";
-import { BSDate, DateFormat, DisplayType } from "./types";
+import { BSDate, DateFormat, FormatPart } from "./types";
 
-
-/** Nepal Standard Time offset (UTC +05:45) */
-const NEPAL_OFFSET_MIN = 5 * 60 + 45;
-
-/**
- * Normalize AD date to UTC midnight
- * This prevents double timezone offset bugs when dates are manually provided
- */
 function normalizeToUtc(date: Date): Date {
   return new Date(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   );
 }
 
-/**
- * Base reference:
- * 1943-04-14 AD (UTC midnight) === NP_INITIAL_YEAR-01-01 BS
- */
 const AD_REFERENCE = new Date(Date.UTC(1943, 3, 14));
 
-/**
- * AD → BS Converter
- */
 export function adToBs(adDate: Date): BSDate {
   if (!(adDate instanceof Date) || isNaN(adDate.getTime())) {
     throw new Error("Invalid AD date");
@@ -74,9 +59,6 @@ export function adToBs(adDate: Date): BSDate {
   };
 }
 
-/**
- * BS → AD Converter
- */
 export function bsToAd(bsYear: number, bsMonth: number, bsDay: number): Date {
   const yearIndex = bsYear - NP_INITIAL_YEAR;
 
@@ -104,29 +86,46 @@ export function bsToAd(bsYear: number, bsMonth: number, bsDay: number): Date {
   return adUtc;
 }
 
-//
-// ──────────────────────────────────────────────
-// Formatting Utilities (User Choice)
-// ──────────────────────────────────────────────
-//
-
 function pad(n: number): string {
   return n.toString().padStart(2, "0");
+}
+
+function toNepaliNum(num: number): string {
+  return num
+    .toString()
+    .split("")
+    .map((d) => String.fromCharCode(0x0966 + parseInt(d)))
+    .join("");
+}
+
+function getNepaliMonth(month: number, type: FormatPart): string {
+  const name = NepaliMonthsData[month - 1].np;
+  if (type === "long") return name;
+  if (type === "short") return name.slice(0, 3);
+  return toNepaliNum(month);
+}
+
+function getNepaliDayName(bsDate: BSDate, type: FormatPart): string {
+  const adDate = bsToAd(bsDate.year, bsDate.month, bsDate.day);
+  const index = adDate.getUTCDay();
+  const name = NepaliDaysData[index].np;
+  if (type === "long") return name;
+  if (type === "short") return name.slice(0, 3);
+  return toNepaliNum(bsDate.day);
 }
 
 export function formatBs(
   date: BSDate,
   format: DateFormat = "YYYY-MM-DD",
-  displayMonth: DisplayType = "numeric",
-  displayDay: DisplayType = "numeric"
+  monthFormat: FormatPart = "numeric",
+  dayFormat: FormatPart = "numeric"
 ): string {
-  const y = convertToNepaliNumber(date.year); // convert year to Nepali digits
-  const monthName = getNepaliMonth(date.month, displayMonth);
-  const dayName = getNepaliDayName(date, displayDay);
+  const y = toNepaliNum(date.year);
+  const monthName = getNepaliMonth(date.month, monthFormat);
+  const dayName = getNepaliDayName(date, dayFormat);
 
-  let m =
-    displayMonth === "numeric" ? convertToNepaliNumber(date.month) : monthName;
-  let d = displayDay === "numeric" ? convertToNepaliNumber(date.day) : dayName;
+  let m = monthFormat === "numeric" ? toNepaliNum(date.month) : monthName;
+  let d = dayFormat === "numeric" ? toNepaliNum(date.day) : dayName;
 
   switch (format) {
     case "DD-MM-YYYY":
@@ -140,37 +139,6 @@ export function formatBs(
   }
 }
 
-/** Convert 1,2,3.. to Nepali digits १,२,३.. */
-function convertToNepaliNumber(num: number): string {
-  return num
-    .toString()
-    .split("")
-    .map((d) => String.fromCharCode(0x0966 + parseInt(d)))
-    .join("");
-}
-
-/** Get Nepali month name */
-function getNepaliMonth(month: number, type: DisplayType): string {
-  const name = NepaliMonthsData[month - 1].np; // full name
-  if (type === "long") return name;
-  if (type === "short") return name.slice(0, 3); // first 3 chars as short
-  return convertToNepaliNumber(month); // numeric
-}
-
-/** Get Nepali day name */
-function getNepaliDayName(bsDate: BSDate, type: DisplayType): string {
-  // Convert BS date to AD to get the correct weekday
-  const adDate = bsToAd(bsDate.year, bsDate.month, bsDate.day);
-  const index = adDate.getUTCDay(); // 0=Sunday, 1=Monday, ... 6=Saturday
-  const name = NepaliDaysData[index].np;
-  if (type === "long") return name;
-  if (type === "short") return name.slice(0, 3); // first 3 chars
-  return convertToNepaliNumber(bsDate.day); // numeric
-}
-
-/**
- * Format AD Date
- */
 export function formatAd(
   date: Date,
   format: DateFormat = "YYYY-MM-DD"

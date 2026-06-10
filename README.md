@@ -13,25 +13,20 @@ npm install @gambhirpoudel/nepali-calendar-kit
 ## Features
 
 - Convert **AD (Gregorian) dates to BS (Bikram Sambat)** and vice versa.
-- Format dates in multiple formats (`YYYY-MM-DD`, `DD-MM-YYYY`, `DD/MM/YYYY`, etc.).
-- Display Nepali dates with:
-
-  - Numeric, short, or long month names
-  - Numeric, short, or long weekday names
-  - Nepali numerals (१, २, ३…)
-
-- React **NepaliDatePicker** component with theming and localization support.
+- Editable **NepaliDatePicker** — type dates in BS or AD, auto-detected and converted.
+- Multiple display formats (`YYYY-MM-DD`, `DD-MM-YYYY`, `DD/MM/YYYY`, `YYYY/MM/DD`).
+- Nepali numeral support (१, २, ३…) via single `calLan` toggle.
+- Fully themeable — every visual element customizable via `Theme`.
+- Keyboard-friendly — Enter to confirm, Escape to dismiss.
 - Fully TypeScript typed.
 
 ---
 
 ## Live Demo
 
-Try the **Nepali Date Picker** and conversion functions directly in your browser:
+Try the interactive playground in your browser:
 
-[<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/google-chrome.svg" alt="Google Chrome" height="20" />](https://nepalicalendarkit.gambhirpoudel.com.np/)
-
-> Click the link to open a live demo with interactive examples.
+[Chrome](https://nepalicalendarkit.gambhirpoudel.com.np/)
 
 ---
 
@@ -47,151 +42,191 @@ import {
 
 // Convert AD → BS
 const bsDate = adToBs(new Date("2026-01-15"));
-console.log(bsDate);
-// Output: { year: 2082, month: 10, day: 1 }
+// { year: 2082, month: 10, day: 1 }
 
 // Convert BS → AD
 const adDate = bsToAd(2082, 10, 1);
-console.log(adDate);
-// Output: Thu Jan 15 2026 00:00:00 GMT+0000 (UTC)
+// Thu Jan 15 2026 00:00:00 GMT+0000 (UTC)
 
-// Format BS Date
-console.log(formatBs(bsDate, "DD-MM-YYYY", "long", "short"));
-// Output: "१-१०-२०८२"
+// Format BS Date (Nepali numerals, month name, weekday name)
+formatBs(bsDate, "DD-MM-YYYY", "long", "short");
+// "१-१०-२०८२"
 
-// Format AD Date
-console.log(formatAd(adDate, "YYYY/MM/DD"));
-// Output: "2026/01/15"
+// Format AD Date (English digits)
+formatAd(adDate, "YYYY/MM/DD");
+// "2026/01/15"
 ```
+
+### formatBs
+
+```ts
+formatBs(date, format?, monthFormat?, dayFormat?)
+```
+
+| Param        | Type                         | Default     | Description                                   |
+|-------------|------------------------------|-------------|-----------------------------------------------|
+| `date`       | `BSDate`                     | —           | The BS date to format                         |
+| `format`     | `DateFormat`                 | `YYYY-MM-DD`| Structural arrangement of Y, M, D             |
+| `monthFormat`| `FormatPart`                 | `"numeric"` | Month: `"numeric"` (१२), `"short"` (पु), `"long"` (पुष) |
+| `dayFormat`  | `FormatPart`                 | `"numeric"` | Day: `"numeric"` (१), `"short"` (सोम), `"long"` (सोमबार) |
+
+All numeric output uses Nepali numerals.
 
 ---
 
 ## 2. Nepali Date Picker
 
 ```tsx
-import React from "react";
 import { NepaliDatePicker } from "@gambhirpoudel/nepali-calendar-kit";
 
 export const MyComponent = () => {
-  const handleChange = (result: any | null) => {
-    console.log("Selected Date:", result);
+  const handleChange = (result) => {
+    console.log("BS:", result.bs);      // "2082-10-01"
+    console.log("AD:", result.ad);       // Date object
+    console.log("Nepali:", result.nepali); // "२०८२-१०-०१"
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Select a Nepali Date</h2>
-      <NepaliDatePicker
-        onChange={handleChange}
-        theme={{
-          primary: "#2563eb",
-          primaryLight: "#eff6ff",
-          radius: "12px",
-          fontFamily: "'Inter', system-ui, sans-serif",
-          shadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-          inputBg: "#ffffff",
-        }}
-        value="2082-10"
-        dateLan="en"
-        monthLan="en"
-        dayLan="en"
-        yearLan="en"
-      />
-    </div>
+    <NepaliDatePicker
+      onChange={handleChange}
+      value="2082-10-01"
+      format="YYYY-MM-DD"
+      calLan="en"
+      theme={{
+        primary: "#6366f1",
+        surfaceBg: "#ffffff",
+        inputBg: "#ffffff",
+        text: "#0f172a",
+        border: "#e2e8f0",
+        radius: "12px",
+      }}
+    />
   );
 };
 ```
 
+### Props
+
+| Prop          | Type                                         | Default        | Description                                    |
+|---------------|----------------------------------------------|----------------|------------------------------------------------|
+| `onChange`    | `(result: DatePickerResult \| null) => void` | `undefined`    | Callback with BS, AD, and Nepali numeral date |
+| `value`       | `string`                                     | `""`           | Initial BS date (`"2082-10-01"` or `"2082-10"`) |
+| `format`      | `DateFormat`                                 | `"YYYY-MM-DD"` | Display and input format                       |
+| `calLan`      | `"en" \| "np"`                               | `"en"`         | Language for all calendar labels               |
+| `placeholder` | `string`                                     | format-based   | Input placeholder text                         |
+| `disabled`    | `boolean`                                    | `false`        | Disable the picker                             |
+| `className`   | `string`                                     | `undefined`    | Additional CSS class on wrapper                |
+| `theme`       | `Theme`                                      | `undefined`    | Visual customization (see below)               |
+
+### Result object
+
+```ts
+interface DatePickerResult {
+  bs: string;     // "2082-10-01"
+  ad: Date;       // equivalent AD Date
+  nepali: string; // "२०८२-१०-०१"
+}
+```
+
+### Input behavior
+
+- **Type a BS date** (year ≥ 2000) — accepted as-is.
+- **Type an AD date** (year < 2000) — auto-converted to BS internally.
+- **Press Enter** — commit the typed date.
+- **Press Escape** — revert to last valid date and close.
+- **Click a day** in the calendar — selects that BS date.
+- Supports Nepali numerals in input (e.g. `२०८२-१०-०१`).
+
 ---
 
-## Props
+## Theme
 
-| Prop       | Type                                         | Default     | Description                      |
-| ---------- | -------------------------------------------- | ----------- | -------------------------------- |
-| `onChange` | `(result: DatePickerResult \| null) => void` | `undefined` | Callback when a date is selected |
-| `theme`    | `Theme`                                      | `undefined` | Custom theming options           |
-| `value`    | `string`                                     | `""`        | Initial date value               |
-| `dateLan`  | `LanguageCode`                               | `"en"`      | Language for date numbers        |
-| `monthLan` | `LanguageCode`                               | `"en"`      | Language for month names         |
-| `dayLan`   | `LanguageCode`                               | `"en"`      | Language for day names           |
-| `yearLan`  | `LanguageCode`                               | `"en"`      | Language for year numbers        |
-
----
-
-## Theme Options
+Every visual aspect is customizable via the `theme` prop.
 
 ```ts
 interface Theme {
-  primary?: string; // Primary color
-  primaryLight?: string; // Light primary color
-  radius?: string; // Border radius
-  fontFamily?: string; // Font family
-  shadow?: string; // Box shadow
-  inputBg?: string; // Input background color
+  primary?: string;     // Accent color — active selections, focus rings, buttons
+  hoverBg?: string;     // Tint for hover, selected, and highlighted states
+  surfaceBg?: string;   // Popover panel and dropdown menu background
+  inputBg?: string;     // Input field background
+  text?: string;        // Default text color
+  border?: string;      // Border color for input, popover, and selects
+  radius?: string;      // Outer border radius for input and popover
+  fontFamily?: string;  // Font family
+  shadow?: string;      // Popover dropdown box shadow
 }
+```
+
+Example dark theme:
+
+```tsx
+<NepaliDatePicker
+  theme={{
+    primary: "#818cf8",
+    hoverBg: "#1e1b4b",
+    surfaceBg: "#0f172a",
+    inputBg: "#0f172a",
+    text: "#f1f5f9",
+    border: "#1e293b",
+    radius: "12px",
+    fontFamily: "'Inter', sans-serif",
+    shadow: "0 20px 50px -12px rgba(0, 0, 0, 0.5)",
+  }}
+/>
+```
+
+---
+
 ## 3. NepaliDate (Date-like API)
 
-The library also provides a **Date-like wrapper** for working with Nepali (BS) dates in a familiar, object-oriented way.
-
-## Get today’s Nepali date
+Object-oriented wrapper for BS dates.
 
 ```ts
 import { NepaliDate } from "@gambhirpoudel/nepali-calendar-kit";
 
+// Today
 const today = NepaliDate.today();
+console.log(today.getYear(), today.getMonth(), today.getDate());
 
-console.log(today.getYear());  // 2082
-console.log(today.getMonth()); // 10
-console.log(today.getDate());  // 1
+// From AD
+const fromAd = new NepaliDate(new Date("2026-01-15"));
+
+// From BS
+const fromBs = new NepaliDate({ year: 2082, month: 10, day: 1 });
+
+// Format (all Nepali numerals/names)
+today.format();                            // "२०८२-१०-०१"
+today.format("DD/MM/YYYY", "long", "short"); // "०१/माघ/२०८२"
+
+// Convert back
+const ad = today.toAD();
+const bs = today.toBS();
 ```
 
----
-
-### Create from AD or BS date
-
-```ts
-// From AD Date
-const npFromAd = new NepaliDate(new Date("2026-01-15"));
-
-// From BS Date
-const npFromBs = new NepaliDate({ year: 2082, month: 10, day: 1 });
-```
-
----
-
-### Format Nepali date
-
-```ts
-today.format();
-// "२०८२-१०-०१"
-
-today.format("DD/MM/YYYY", "long", "short");
-// "०१/माघ/२०८२"
-```
-
----
-
-### Convert back to AD
-
-```ts
-const adDate = today.toAD();
-console.log(adDate);
-// Thu Jan 15 2026 00:00:00 GMT+0000 (UTC)
-```
-
----
-
-### Available Methods
+### Methods
 
 | Method               | Description                            |
-| -------------------- | -------------------------------------- |
-| `NepaliDate.today()` | Returns today’s Nepali (BS) date       |
-| `getYear()`          | Returns BS year                        |
-| `getMonth()`         | Returns BS month (1–12)                |
-| `getDate()`          | Returns BS day                         |
-| `getDay()`           | Returns weekday (0–6, Sunday–Saturday) |
-| `format()`           | Formats BS date                        |
-| `toAD()`             | Converts BS → AD                       |
-| `toBS()`             | Returns raw BS object                  |
+|----------------------|----------------------------------------|
+| `NepaliDate.today()` | Today's Nepali (BS) date               |
+| `getYear()`          | BS year                                |
+| `getMonth()`         | BS month (1–12)                        |
+| `getDate()`          | BS day                                 |
+| `getDay()`           | Weekday (0=Sunday, 6=Saturday)         |
+| `format(format?, monthFormat?, dayFormat?)` | Format BS date |
+| `toAD()`             | Convert BS → AD                        |
+| `toBS()`             | Return raw BS object                   |
+
+### FormatPart
+
+```ts
+type FormatPart = "numeric" | "short" | "long";
+```
+
+| Value       | Month example | Day example    |
+|-------------|---------------|----------------|
+| `"numeric"` | १०            | १              |
+| `"short"`   | पुष           | सोम            |
+| `"long"`    | पुष           | सोमबार         |
 
 ---
 
@@ -204,18 +239,6 @@ console.log(adDate);
 
 ---
 
-## Example Output
-
-```ts
-adToBs(new Date("2026-01-15"));
-// { year: 2082, month: 10, day: 1 }
-
-formatBs({ year: 2082, month: 10, day: 1 }, "DD-MM-YYYY", "long", "numeric");
-// "१-१०-२०८२"
-```
-
 ## License
 
 MIT © [Gambhir Poudel](https://github.com/gambhirpoudel)
-
----
